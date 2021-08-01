@@ -708,10 +708,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Turn: Black, 12 Turns, Your Turn'
+  m_text: "(\uAC80\uC815) \uB098\uC758 \uD134, 12\uD134 \uC9F8"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 487093c9d20be45259af8ca14cc904d5, type: 2}
+  m_sharedMaterial: {fileID: 2722006732428687390, guid: 487093c9d20be45259af8ca14cc904d5, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1029,10 +1029,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: PLACE
+  m_text: "\uCC29\uC218"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 487093c9d20be45259af8ca14cc904d5, type: 2}
+  m_sharedMaterial: {fileID: 2722006732428687390, guid: 487093c9d20be45259af8ca14cc904d5, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
