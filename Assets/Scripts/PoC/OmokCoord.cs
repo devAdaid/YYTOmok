@@ -5,22 +5,25 @@ using UnityEngine.EventSystems;
 
 public class OmokCoord : MonoBehaviour
 {
+    public float padRatio = 0.95f;
     public RectTransform dol;
-    public RectTransform leftup;
+    public RectTransform topRight;
 
-    private Camera cam;
-    private RectTransform rectTf;
+    public Camera cam;
+    public RectTransform rectTf;
 
-    private void Awake()
+    void Update()
     {
-        cam = FindObjectOfType<Camera>();
-        rectTf = GetComponent<RectTransform>();
-        Debug.Log($"leftup: {leftup.position}");
+        Debug.Log($"size: {rectTf.rect.size}");
+        Debug.Log($"topRight: {rectTf.rect.max}");
+        Debug.Log($"real topRight: {topRight.transform.position}");
     }
 
     public void OnClick(BaseEventData e)
     {
         var eventData = (PointerEventData)e;
         dol.position = eventData.position;
+
+
     }
 }
