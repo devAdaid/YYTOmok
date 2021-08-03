@@ -6,6 +6,8 @@ namespace Presentaions
     public class OmokViewHelper : MonoBehaviour
     {
         private static float padRatio = 0.99f;
+        [SerializeField]
+        private float stoneRatio = 0.95f;
         public RectTransform dol;
         public RectTransform topRight;
 
