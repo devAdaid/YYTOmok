@@ -49,23 +49,23 @@ namespace Presentaions
         private float yMin => rectTf.position.y - boardSizeHalf;
         private float yMax => rectTf.position.y + boardSizeHalf;
 
-        public (int rowIndex, int colIndex) GetGridIndex(BaseEventData e)
+        public OmokGridPosition GetGridPosition(BaseEventData e)
         {
             var eventData = (PointerEventData)e;
             positionHelper.position = eventData.position;
             return GetGridIndex(positionHelper.position);
         }
 
-        public Vector3 GetPosition(int rowIndex, int colIndex)
+        public Vector3 GetWorldPosition(OmokGridPosition gridPosition)
         {
-            var xPos = xMin + gridSize * colIndex;
-            var yPos = yMin + gridSize * rowIndex;
+            var xPos = xMin + gridSize * gridPosition.Col;
+            var yPos = yMin + gridSize * gridPosition.Row;
             xPos += gridSize / 2;
             yPos += gridSize / 2;
             return new Vector3(xPos, yPos, 0f);
         }
 
-        private (int rowIndex, int colIndex) GetGridIndex(Vector3 position)
+        private OmokGridPosition GetGridIndex(Vector3 position)
         {
             var colIndex = -1;
             if (position.x < xMin)
@@ -95,7 +95,7 @@ namespace Presentaions
                 rowIndex = (int)((position.y - yMin) / gridSize);
             }
 
-            return (rowIndex, colIndex);
+            return new OmokGridPosition(rowIndex, colIndex);
         }
     }
 }

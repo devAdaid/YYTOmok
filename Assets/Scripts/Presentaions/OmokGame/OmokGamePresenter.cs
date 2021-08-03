@@ -28,9 +28,13 @@ namespace Presentaions
 
         public void OnDataUpdated(ModelChangeEventBox eventBox)
         {
-            if (eventBox.TryGetEvent<PlaceOmokStone>(out var placeEvent))
+            if (eventBox.TryGetEvent<PlacePlayerOmokStone>(out var playerPlaceEvent))
             {
-                _view.PlaceStone(placeEvent.RowIndex, placeEvent.ColIndex, placeEvent.StoneColor);
+                _view.PlaceStone(playerPlaceEvent.Position, playerPlaceEvent.StoneColor, !playerPlaceEvent.IsBoardFull);
+            }
+            if (eventBox.TryGetEvent<PlaceAIOmokStone>(out var aiPlaceEvent))
+            {
+                _view.PlaceStone(aiPlaceEvent.Position, aiPlaceEvent.StoneColor);
             }
         }
 
@@ -45,9 +49,14 @@ namespace Presentaions
         #endregion
 
         #region From View
-        public void PlaceStone(int rowIndex, int colIndex)
+        public void PlacePlayerStone(OmokGridPosition position)
         {
-            _omokGame.PlaceStone(_omokGame.CurrentPlayer, rowIndex, colIndex);
+            _omokGame.PlacePlayerStone(position);
+        }
+
+        public void RequestAIPlaceStone()
+        {
+            _omokGame.PlaceAIStone();
         }
         #endregion
     }

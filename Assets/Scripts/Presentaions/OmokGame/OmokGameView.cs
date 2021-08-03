@@ -1,3 +1,4 @@
+using System.Collections;
 using AY.Core;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -32,22 +33,36 @@ namespace Presentaions
         #endregion
 
         #region From Presenter
-        public void PlaceStone(int rowIndex, int colIndex, OmokStoneColor stoneColor)
+        public void PlaceStone(OmokGridPosition gridPosition, OmokStoneColor stoneColor, bool waitAI = false)
         {
-            var position = _viewHelper.GetPosition(rowIndex, colIndex);
+            var position = _viewHelper.GetWorldPosition(gridPosition);
             var stoneEntry = Instantiate(_stonePrefab, position, Quaternion.identity, transform);
             stoneEntry.ApplyStoneState(_viewHelper.StoneSize, stoneColor);
+
+            if (waitAI)
+            {
+                StartCoroutine(WaitAITurn());
+            }
         }
         #endregion
 
         #region To Presenter
-
-        #endregion
-
         public void OnClicked(BaseEventData e)
         {
-            var (rowIndex, colIndex) = _viewHelper.GetGridIndex(e);
-            _presenter.PlaceStone(rowIndex, colIndex);
+            var gridPosition = _viewHelper.GetGridPosition(e);
+            _presenter.PlacePlayerStone(gridPosition);
+        }
+
+        public void OnAIWaitEnd()
+        {
+            _presenter.RequestAIPlaceStone();
+        }
+        #endregion
+
+        private IEnumerator WaitAITurn()
+        {
+            yield return new WaitForSeconds(2f);
+            OnAIWaitEnd();
         }
     }
 }
