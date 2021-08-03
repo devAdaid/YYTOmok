@@ -11,23 +11,36 @@ namespace Presentaions
         private StoneColorStaticData _stoneColorStaticData;
         [field: SerializeField]
         private Image _stoneImage;
-
-        public void ApplyStoneColor(OmokGridState stoneType)
+        private RectTransform _rectTf;
+        private RectTransform rectTf
         {
+            get
+            {
+                if (_rectTf == null)
+                {
+                    _rectTf = (RectTransform)transform;
+                }
+                return _rectTf;
+            }
+        }
+
+        public void ApplyStoneState(float stoneSize, OmokStoneColor stoneType)
+        {
+            rectTf.sizeDelta = new Vector2(stoneSize, stoneSize);
             _stoneImage.color = GetStoneColor(stoneType);
         }
 
-        private Color GetStoneColor(OmokGridState stoneColor)
+        private Color GetStoneColor(OmokStoneColor stoneColor)
         {
             switch (stoneColor)
             {
-                case OmokGridState.Black:
+                case OmokStoneColor.Black:
                     return _stoneColorStaticData.BlackStoneColor;
-                case OmokGridState.White:
+                case OmokStoneColor.White:
                     return _stoneColorStaticData.WhiteStoneColor;
             }
 
-            Debug.LogError($"지원하지 않는 {nameof(OmokGridState)} 타입: {stoneColor}");
+            Debug.LogError($"지원하지 않는 {nameof(OmokStoneColor)} 타입: {stoneColor}");
             return Color.clear;
         }
     }

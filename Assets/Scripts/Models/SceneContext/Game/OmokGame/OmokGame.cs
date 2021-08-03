@@ -1,29 +1,33 @@
 
 using AY.Core;
+using ModelChangeEvents;
 using UnityEngine;
 
 namespace Models
 {
-    public class OmokGame : Model<OmokGame>
+    public class OmokGame : Model
     {
+        public OmokPlayer PlayerColor { get; private set; } = OmokPlayer.Black;
         public OmokPlayer CurrentPlayer { get; private set; } = OmokPlayer.Black;
-        public OmokGridState[,] BoardState { get; private set; } = new OmokGridState[Define.OMOK_COUNT, Define.OMOK_COUNT];
+        public OmokStoneColor[,] BoardState { get; private set; } = new OmokStoneColor[Define.OMOK_COUNT, Define.OMOK_COUNT];
 
-        public bool PlaceStone(OmokPlayer player, int rowIndex, int colIndex)
+        public void PlaceStone(OmokPlayer player, int rowIndex, int colIndex)
         {
             if (player != CurrentPlayer)
             {
-                return false;
+                return;
             }
 
             if (!CanPlaceStone(rowIndex, colIndex))
             {
-                return false;
+                return;
             }
 
-            var stone = GetOmokStone(player);
-            BoardState[rowIndex, colIndex] = stone;
-            return true;
+            var stoneColor = GetOmokStoneColor(player);
+            BoardState[rowIndex, colIndex] = stoneColor;
+            CurrentPlayer = CurrentPlayer.GetOpponentPlayer();
+
+            SendEventDirectly<PlaceOmokStone>(new PlaceOmokStone(rowIndex, colIndex, stoneColor));
         }
 
         private bool CanPlaceStone(int rowIndex, int colIndex)
@@ -33,7 +37,7 @@ namespace Models
                 return false;
             }
 
-            if (BoardState[rowIndex, colIndex] != OmokGridState.Empty)
+            if (BoardState[rowIndex, colIndex] != OmokStoneColor.Empty)
             {
                 return false;
             }
@@ -49,18 +53,18 @@ namespace Models
                 && colIndex < Define.OMOK_COUNT;
         }
 
-        private OmokGridState GetOmokStone(OmokPlayer player)
+        private OmokStoneColor GetOmokStoneColor(OmokPlayer player)
         {
             switch (player)
             {
                 case OmokPlayer.Black:
-                    return OmokGridState.Black;
+                    return OmokStoneColor.Black;
                 case OmokPlayer.White:
-                    return OmokGridState.White;
+                    return OmokStoneColor.White;
             }
 
             Debug.LogError($"{player}은 지원되지 않는 {nameof(OmokPlayer)} 타입");
-            return OmokGridState.Empty;
+            return OmokStoneColor.Empty;
         }
     }
 }

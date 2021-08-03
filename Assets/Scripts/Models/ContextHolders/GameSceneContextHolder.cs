@@ -4,6 +4,6 @@ namespace Models
 {
     public class GameSceneContextHolder : MonoSingleton<GameSceneContextHolder>
     {
-        public readonly OmokGame OmokGame;
+        public readonly OmokGame OmokGame = new OmokGame();
     }
 }

@@ -8,6 +8,8 @@ namespace Presentaions
     {
         [SerializeField]
         private OmokViewHelper _viewHelper;
+        [SerializeField]
+        private OmokStoneEntry _stonePrefab;
 
         #region View
         protected OmokGamePresenter _presenter;
@@ -30,9 +32,11 @@ namespace Presentaions
         #endregion
 
         #region From Presenter
-        public void ApplyBoardState(OmokGridState[,] boardState)
+        public void PlaceStone(int rowIndex, int colIndex, OmokStoneColor stoneColor)
         {
-
+            var position = _viewHelper.GetPosition(rowIndex, colIndex);
+            var stoneEntry = Instantiate(_stonePrefab, position, Quaternion.identity, transform);
+            stoneEntry.ApplyStoneState(_viewHelper.StoneSize, stoneColor);
         }
         #endregion
 
@@ -42,7 +46,8 @@ namespace Presentaions
 
         public void OnClicked(BaseEventData e)
         {
-            var eventData = (PointerEventData)e;
+            var (rowIndex, colIndex) = _viewHelper.GetGridIndex(e);
+            _presenter.PlaceStone(rowIndex, colIndex);
         }
     }
 }

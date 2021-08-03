@@ -2,36 +2,44 @@ using System.Collections.Generic;
 
 namespace AY.Core
 {
-    public abstract class Model<T> : IModel<T> where T : IModel<T>
+    public abstract class Model : IModel
     {
-        protected List<IListenModel<T>> _listeners = new List<IListenModel<T>>();
+        protected readonly ModelChangeEventBox _eventBox = new ModelChangeEventBox();
+        protected readonly List<IListenModel> _listeners = new List<IListenModel>();
 
-        public void AddListener(IListenModel<T> listener)
+        public void AddListener(IListenModel listener)
         {
-            if (_listeners == null)
-            {
-                _listeners = new List<IListenModel<T>>();
-            }
-
             _listeners.Add(listener);
         }
 
-        public void RemoveListener(IListenModel<T> listener)
+        public void RemoveListener(IListenModel listener)
         {
-            if (_listeners == null)
+            if (!_listeners.Contains(listener))
             {
-                _listeners = new List<IListenModel<T>>();
+                return;
             }
 
             _listeners.Remove(listener);
         }
 
-        protected virtual void NotifyChange()
+        public void AddEvent<T>(T changeEvent) where T : ModelChangeEvent
+        {
+            _eventBox.AddEvent<T>(changeEvent);
+        }
+
+        public void SendEventDirectly<T>(T changeEvent) where T : ModelChangeEvent
+        {
+            _eventBox.AddEvent<T>(changeEvent);
+            SendEvent();
+        }
+
+        public void SendEvent()
         {
             foreach (var listener in _listeners)
             {
-                listener.OnDataUpdated();
+                listener.OnDataUpdated(_eventBox);
             }
+            _eventBox.ClearEvents();
         }
     }
 }

@@ -1,4 +1,4 @@
-public enum OmokGridState
+public enum OmokStoneColor
 {
     Empty,
     Black,

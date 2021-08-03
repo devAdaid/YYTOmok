@@ -135,12 +135,12 @@ GameObject:
   - component: {fileID: 161256350}
   - component: {fileID: 161256349}
   m_Layer: 5
-  m_Name: Dol
+  m_Name: PositionHelper
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &161256348
 RectTransform:
   m_ObjectHideFlags: 0
@@ -908,12 +908,12 @@ GameObject:
   - component: {fileID: 1311855686}
   - component: {fileID: 1311855685}
   m_Layer: 5
-  m_Name: TopRIght
+  m_Name: TopRIghtHelper
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1311855684
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1077,11 +1077,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1571800552}
+  - component: {fileID: 1571800558}
+  - component: {fileID: 1571800556}
+  - component: {fileID: 1571800557}
   - component: {fileID: 1571800555}
   - component: {fileID: 1571800554}
   - component: {fileID: 1571800553}
-  - component: {fileID: 1571800556}
-  - component: {fileID: 1571800557}
   m_Layer: 5
   m_Name: Board
   m_TagString: Untagged
@@ -1171,14 +1172,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 1571800551}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4556cf643c177484fae633e71029af76, type: 3}
+  m_Script: {fileID: 11500000, guid: a6f7d78513ce7485a9be713857eb8af1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  padRatio: 0.99
-  dol: {fileID: 161256348}
-  topRight: {fileID: 1311855684}
-  cam: {fileID: 519420031}
-  rectTf: {fileID: 1571800552}
+  _viewHelper: {fileID: 1571800558}
+  _stonePrefab: {fileID: 6961148977493079067, guid: c3bc13ab3db95410ca130f6caf3b67be, type: 3}
 --- !u!114 &1571800557
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1197,8 +1195,8 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls:
         - m_Target: {fileID: 1571800556}
-          m_TargetAssemblyTypeName: OmokCoord, Assembly-CSharp
-          m_MethodName: OnClick
+          m_TargetAssemblyTypeName: Presentaions.OmokGameView, Assembly-CSharp
+          m_MethodName: OnClicked
           m_Mode: 0
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -1208,6 +1206,21 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+--- !u!114 &1571800558
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1571800551}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1892018c4d08e4ec4842b3b548a191b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  stoneRatio: 0.95
+  topRightHelper: {fileID: 1311855684}
+  positionHelper: {fileID: 161256348}
 --- !u!1 &1604100990
 GameObject:
   m_ObjectHideFlags: 0

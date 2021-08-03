@@ -1,7 +1,7 @@
 namespace AY.Core
 {
-    public interface IListenModel<T> where T : IModel<T>
+    public interface IListenModel
     {
-        void OnDataUpdated();
+        void OnDataUpdated(ModelChangeEventBox eventBox);
     }
 }

@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace Presentaions
 {
@@ -8,8 +9,10 @@ namespace Presentaions
         private static float padRatio = 0.99f;
         [SerializeField]
         private float stoneRatio = 0.95f;
-        public RectTransform dol;
-        public RectTransform topRight;
+        [SerializeField]
+        private RectTransform topRightHelper;
+        [SerializeField]
+        private RectTransform positionHelper;
 
         private Camera _cam;
         private Camera cam
@@ -37,14 +40,30 @@ namespace Presentaions
             }
         }
 
-        private float boardSizeHalf => (topRight.position - rectTf.position).x * padRatio;
-        private float boardSize => 2 * boardSizeHalf;
+        public float StoneSize => stoneRatio * gridSize;
         private float gridSize => boardSize / Define.OMOK_COUNT;
+        private float boardSizeHalf => (topRightHelper.position - rectTf.position).x * padRatio;
+        private float boardSize => 2 * boardSizeHalf;
         private float xMin => rectTf.position.x - boardSizeHalf;
         private float xMax => rectTf.position.x + boardSizeHalf;
         private float yMin => rectTf.position.y - boardSizeHalf;
         private float yMax => rectTf.position.y + boardSizeHalf;
 
+        public (int rowIndex, int colIndex) GetGridIndex(BaseEventData e)
+        {
+            var eventData = (PointerEventData)e;
+            positionHelper.position = eventData.position;
+            return GetGridIndex(positionHelper.position);
+        }
+
+        public Vector3 GetPosition(int rowIndex, int colIndex)
+        {
+            var xPos = xMin + gridSize * colIndex;
+            var yPos = yMin + gridSize * rowIndex;
+            xPos += gridSize / 2;
+            yPos += gridSize / 2;
+            return new Vector3(xPos, yPos, 0f);
+        }
 
         private (int rowIndex, int colIndex) GetGridIndex(Vector3 position)
         {
@@ -77,15 +96,6 @@ namespace Presentaions
             }
 
             return (rowIndex, colIndex);
-        }
-
-        private Vector3 GetPosition(int rowIndex, int colIndex)
-        {
-            var xPos = xMin + gridSize * colIndex;
-            var yPos = yMin + gridSize * rowIndex;
-            xPos += gridSize / 2;
-            yPos += gridSize / 2;
-            return new Vector3(xPos, yPos, 0f);
         }
     }
 }

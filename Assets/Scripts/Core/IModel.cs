@@ -1,7 +1,8 @@
 namespace AY.Core
 {
-    public interface IModel<T> where T : IModel<T>
+    public interface IModel
     {
-        void AddListener(IListenModel<T> listener);
+        void AddListener(IListenModel listener);
+        void RemoveListener(IListenModel listener);
     }
 }

@@ -4,6 +4,6 @@ namespace Presentaions
 {
     public interface IOmokGameView : IView
     {
-        void ApplyBoardState(OmokGridState[,] boardState);
+        void PlaceStone(int rowIndex, int colIndex, OmokStoneColor stoneColor);
     }
 }

@@ -8,6 +8,7 @@ namespace AY.Core
 
         protected virtual void Awake()
         {
+            Initialize();
             AddUIEvent();
         }
 
