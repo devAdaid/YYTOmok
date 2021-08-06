@@ -62,8 +62,8 @@ namespace Models
             if (cardType == SkilCardType.Strike)
             {
                 var targetActor = GetActor(_commonGame.NotCurrentActor);
-                targetActor.DecreaseHp(10);
-                SendEventDirectly<RpgGameEvents.Attack>(new RpgGameEvents.Attack(_commonGame.CurrentActor, _commonGame.NotCurrentActor, 10));
+                targetActor.DecreaseHp(15);
+                SendEventDirectly<RpgGameEvents.Attack>(new RpgGameEvents.Attack(_commonGame.CurrentActor, _commonGame.NotCurrentActor, 15));
             }
 
             if (_commonGame.CurrentActor == ActorType.Player)

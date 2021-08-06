@@ -10,6 +10,8 @@ namespace Presentations
         private RpgGameActorEntry _playerEntry;
         [SerializeField]
         private RpgGameActorEntry _opponentEntry;
+        [SerializeField]
+        private Animator _animator;
 
         #region View
         protected RpgGamePresenter _presenter;
@@ -36,6 +38,15 @@ namespace Presentations
         {
             var targetActor = GetActorEntry(target);
             targetActor.ShowDamageFloater(damage);
+
+            if (performer == ActorType.Player)
+            {
+                _animator.Play("PlayerAttack");
+            }
+            else
+            {
+                _animator.Play("OpponentAttack");
+            }
         }
 
         public void ApplyHp(ActorType actorType, int hp, int maxHp)
