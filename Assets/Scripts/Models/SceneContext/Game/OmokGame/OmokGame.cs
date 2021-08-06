@@ -16,6 +16,8 @@ namespace Models
         public ActorType NotCurrentActor => CurrentActor.GetOpponentActor();
         public int TurnCount { get; private set; }
         public int PlaceCount { get; private set; }
+        private OmokGridPosition _playerLastPosition = OmokGridPosition.INVALID;
+        private OmokGridPosition _opponentLastPosition = OmokGridPosition.INVALID;
 
         private readonly RpgGame _rpgGame;
 
@@ -50,42 +52,51 @@ namespace Models
 
         public void PlacePlayerStone(OmokGridPosition position)
         {
-            if (!IsPlayerTurn())
-            {
-                return;
-            }
-
-            if (!CanPlaceStone(position))
-            {
-                return;
-            }
-
-            DoPlaceStone(position, PlayerColor);
+            DoPlaceStone(position, ActorType.Player);
         }
 
         public void PlaceOpponentStone()
         {
-            if (IsPlayerTurn())
+            var position = GetAutoPlacePosition();
+            DoPlaceStone(position, ActorType.Opponent);
+        }
+
+        private void DoPlaceStone(OmokGridPosition position, ActorType actorType)
+        {
+            if (actorType != CurrentActor)
             {
                 return;
             }
 
-            var position = GetAutoPlacePosition();
             if (!CanPlaceStone(position))
             {
                 return;
             }
 
-            DoPlaceStone(position, OpponentColor);
-        }
-
-        private void DoPlaceStone(OmokGridPosition position, OmokStoneColor stoneColor)
-        {
+            var stoneColor = GetOmokStoneColor(actorType);
             BoardState[position.Row, position.Col] = stoneColor;
             PlaceCount += 1;
-            _rpgGame.Attack(CurrentActor, NotCurrentActor);
+
+            var lastPlacePosition = GetLastPlacePosition(actorType);
+            var attackTypes = GetAttackTypes(position, stoneColor, lastPlacePosition);
+
+            _rpgGame.Attack(CurrentActor, NotCurrentActor, attackTypes);
+
+            //TODO
+            if (actorType == ActorType.Player)
+            {
+                _playerLastPosition = position;
+            }
+            else
+            {
+                _opponentLastPosition = position;
+            }
 
             if (IsBoardFull())
+            {
+                IsGameEnd = true;
+            }
+            else if (_rpgGame.IsGameEnd)
             {
                 IsGameEnd = true;
             }
@@ -137,6 +148,20 @@ namespace Models
             return OmokStoneColor.Empty;
         }
 
+        public OmokGridPosition GetLastPlacePosition(ActorType actorType)
+        {
+            switch (actorType)
+            {
+                case ActorType.Player:
+                    return _playerLastPosition;
+                case ActorType.Opponent:
+                    return _opponentLastPosition;
+            }
+
+            UnityEngine.Debug.LogError($"{actorType}은 지원되지 않는 {nameof(ActorType)} 타입");
+            return OmokGridPosition.INVALID;
+        }
+
         public bool IsBoardFull()
         {
             return PlaceCount >= (Define.OMOK_COUNT * Define.OMOK_COUNT);
@@ -165,6 +190,144 @@ namespace Models
 
             var randIndex = UnityEngine.Random.Range(0, candidates.Count);
             return candidates[randIndex];
+        }
+
+        private List<AttackType> GetAttackTypes(OmokGridPosition position, OmokStoneColor stoneColor, OmokGridPosition lastPlacePosition)
+        {
+            var horizontalCount = GetHorizontalSameCount(position, stoneColor);
+            var verticalCount = GetVerticalSameCount(position, stoneColor);
+            var mainDiagonalCount = GetMainDiagonalSameCont(position, stoneColor);
+            var antiDiagonalCount = GetAntiDiagonalSameCont(position, stoneColor);
+
+            var attacks = new List<AttackType>();
+            var counts = new List<int>() { horizontalCount, verticalCount, mainDiagonalCount, antiDiagonalCount };
+            foreach (var count in counts)
+            {
+                switch (count)
+                {
+                    case 1:
+                    case 2:
+                        {
+                            break;
+                        }
+                    case 3:
+                        {
+                            attacks.Add(AttackType.DrawNormalCard);
+                            break;
+                        }
+                    case 4:
+                        {
+                            attacks.Add(AttackType.DrawRareCard);
+                            break;
+                        }
+                    case 5:
+                        return new List<AttackType>() { AttackType.InstantDead };
+                }
+            }
+
+            if (attacks.Count == 0)
+            {
+                if (lastPlacePosition.IsValid() && position.IsNeighbor(lastPlacePosition))
+                {
+                    attacks.Add(AttackType.ComboAttack);
+                }
+                else
+                {
+                    attacks.Add(AttackType.NormalAttack);
+                }
+            }
+
+            return attacks;
+        }
+
+        private int GetHorizontalSameCount(OmokGridPosition position, OmokStoneColor stoneColor)
+        {
+            // 가로 탐색
+            int horizontalCount = 1;
+            for (int col = position.Col - 1; col >= 0; --col)
+            {
+                if (!IncreaseCountIfSameColor(position.Row, col, stoneColor, ref horizontalCount))
+                {
+                    break;
+                }
+            }
+            for (int col = position.Col + 1; col < Define.OMOK_COUNT; ++col)
+            {
+                if (!IncreaseCountIfSameColor(position.Row, col, stoneColor, ref horizontalCount))
+                {
+                    break;
+                }
+            }
+            return horizontalCount;
+        }
+
+        private int GetVerticalSameCount(OmokGridPosition position, OmokStoneColor stoneColor)
+        {
+            // 세로 탐색
+            int verticalCount = 1;
+            for (int row = position.Row - 1; row >= 0; --row)
+            {
+                if (!IncreaseCountIfSameColor(row, position.Col, stoneColor, ref verticalCount))
+                {
+                    break;
+                }
+            }
+            for (int row = position.Row + 1; row < Define.OMOK_COUNT; ++row)
+            {
+                if (!IncreaseCountIfSameColor(row, position.Col, stoneColor, ref verticalCount))
+                {
+                    break;
+                }
+            }
+            return verticalCount;
+        }
+
+        private int GetMainDiagonalSameCont(OmokGridPosition position, OmokStoneColor stoneColor)
+        {
+            int mainDiagonalCount = 1;
+            for (int row = position.Row - 1, col = position.Col - 1; row >= 0 && col >= 0; --row, --col)
+            {
+                if (!IncreaseCountIfSameColor(row, col, stoneColor, ref mainDiagonalCount))
+                {
+                    break;
+                }
+            }
+            for (int row = position.Row + 1, col = position.Col + 1; row < Define.OMOK_COUNT && col < Define.OMOK_COUNT; ++row, ++col)
+            {
+                if (!IncreaseCountIfSameColor(row, col, stoneColor, ref mainDiagonalCount))
+                {
+                    break;
+                }
+            }
+            return mainDiagonalCount;
+        }
+
+        private int GetAntiDiagonalSameCont(OmokGridPosition position, OmokStoneColor stoneColor)
+        {
+            int antiDiagonalCount = 1;
+            for (int row = position.Row - 1, col = position.Col + 1; row >= 0 && col < Define.OMOK_COUNT; --row, ++col)
+            {
+                if (!IncreaseCountIfSameColor(row, col, stoneColor, ref antiDiagonalCount))
+                {
+                    break;
+                }
+            }
+            for (int row = position.Row + 1, col = position.Col - 1; row < Define.OMOK_COUNT && col >= 0; ++row, --col)
+            {
+                if (!IncreaseCountIfSameColor(row, col, stoneColor, ref antiDiagonalCount))
+                {
+                    break;
+                }
+            }
+            return antiDiagonalCount;
+        }
+
+        private bool IncreaseCountIfSameColor(int row, int col, OmokStoneColor stoneColor, ref int counter)
+        {
+            var targetColor = BoardState[row, col];
+            var result = targetColor == stoneColor;
+            if (result) counter += 1;
+            return result;
         }
     }
 }
