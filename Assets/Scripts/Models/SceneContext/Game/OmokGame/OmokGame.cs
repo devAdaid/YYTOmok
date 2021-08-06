@@ -1,18 +1,48 @@
 
+using System;
 using System.Collections.Generic;
 using AY.Core;
 using ModelChangeEvents;
-using UnityEngine;
 
 namespace Models
 {
     public class OmokGame : Model
     {
-        public OmokActorType PlayerActor { get; private set; } = OmokActorType.Black;
-        public OmokActorType OpponentActor => PlayerActor.GetOpponentActor();
-        public OmokActorType CurrentOmokActor { get; private set; } = OmokActorType.Black;
-        public OmokStoneColor[,] BoardState { get; private set; } = new OmokStoneColor[Define.OMOK_COUNT, Define.OMOK_COUNT];
-        public int TurnCount { get; private set; } = 1;
+        public readonly OmokStoneColor[,] BoardState;
+        public readonly OmokStoneColor PlayerColor;
+        public bool IsGameEnd { get; private set; }
+        public OmokStoneColor OpponentColor => PlayerColor.GetOpponentColor();
+        public ActorType CurrentActor { get; private set; }
+        public int TurnCount { get; private set; }
+        public int PlaceCount { get; private set; }
+
+        private static readonly OmokStoneColor FIRST_ACTOR_COLOR = OmokStoneColor.Black;
+
+        public OmokGame()
+        {
+            BoardState = new OmokStoneColor[Define.OMOK_COUNT, Define.OMOK_COUNT];
+            TurnCount = 1;
+            PlaceCount = 0;
+
+            // 선턴 결정
+            var rand = new Random();
+            var randIndex = rand.Next(2);
+            switch (randIndex)
+            {
+                case 0:
+                    {
+                        CurrentActor = ActorType.Player;
+                        PlayerColor = FIRST_ACTOR_COLOR;
+                        break;
+                    }
+                case 1:
+                    {
+                        CurrentActor = ActorType.Opponent;
+                        PlayerColor = FIRST_ACTOR_COLOR.GetOpponentColor();
+                        break;
+                    }
+            }
+        }
 
         public void PlacePlayerStone(OmokGridPosition position)
         {
@@ -26,10 +56,7 @@ namespace Models
                 return;
             }
 
-            var stoneColor = GetOmokStoneColor(PlayerActor);
-            DoPlaceStone(position, stoneColor);
-
-            SendEventDirectly<OmokGameEvents.PlacePlayerStone>(new OmokGameEvents.PlacePlayerStone(position, stoneColor, IsBoardFull()));
+            DoPlaceStone(position, PlayerColor);
         }
 
         public void PlaceOpponentStone()
@@ -39,28 +66,36 @@ namespace Models
                 return;
             }
 
-            var position = GetOpponentPlacePosition();
+            var position = GetAutoPlacePosition();
             if (!CanPlaceStone(position))
             {
                 return;
             }
 
-            var stoneColor = GetOmokStoneColor(OpponentActor);
-            DoPlaceStone(position, stoneColor);
-
-            SendEventDirectly<OmokGameEvents.PlaceOpponentStone>(new OmokGameEvents.PlaceOpponentStone(position, stoneColor));
+            DoPlaceStone(position, OpponentColor);
         }
 
         private void DoPlaceStone(OmokGridPosition position, OmokStoneColor stoneColor)
         {
             BoardState[position.Row, position.Col] = stoneColor;
-            CurrentOmokActor = CurrentOmokActor.GetOpponentActor();
-            TurnCount += 1;
+            PlaceCount += 1;
+
+            if (IsBoardFull())
+            {
+                IsGameEnd = true;
+            }
+            else
+            {
+                CurrentActor = CurrentActor.GetOpponentActor();
+                TurnCount += 1;
+            }
+
+            SendEventDirectly<OmokGameEvents.PlaceStone>(new OmokGameEvents.PlaceStone(position, stoneColor));
         }
 
         public bool IsPlayerTurn()
         {
-            return CurrentOmokActor == PlayerActor;
+            return CurrentActor == ActorType.Player;
         }
 
         private bool CanPlaceStone(int rowIndex, int colIndex)
@@ -83,26 +118,26 @@ namespace Models
             return true;
         }
 
-        private OmokStoneColor GetOmokStoneColor(OmokActorType player)
+        public OmokStoneColor GetOmokStoneColor(ActorType actorType)
         {
-            switch (player)
+            switch (actorType)
             {
-                case OmokActorType.Black:
-                    return OmokStoneColor.Black;
-                case OmokActorType.White:
-                    return OmokStoneColor.White;
+                case ActorType.Player:
+                    return PlayerColor;
+                case ActorType.Opponent:
+                    return OpponentColor;
             }
 
-            Debug.LogError($"{player}은 지원되지 않는 {nameof(OmokActorType)} 타입");
+            UnityEngine.Debug.LogError($"{actorType}은 지원되지 않는 {nameof(ActorType)} 타입");
             return OmokStoneColor.Empty;
         }
 
-        private bool IsBoardFull()
+        public bool IsBoardFull()
         {
-            return TurnCount < (Define.OMOK_COUNT * Define.OMOK_COUNT);
+            return PlaceCount >= (Define.OMOK_COUNT * Define.OMOK_COUNT);
         }
 
-        private OmokGridPosition GetOpponentPlacePosition()
+        private OmokGridPosition GetAutoPlacePosition()
         {
             // TODO: AI 구현
             var candidates = new List<OmokGridPosition>();

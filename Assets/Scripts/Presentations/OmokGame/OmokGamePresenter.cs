@@ -1,6 +1,7 @@
 using AY.Core;
 using ModelChangeEvents;
 using Models;
+using UnityEngine;
 
 namespace Presentations
 {
@@ -28,28 +29,35 @@ namespace Presentations
 
         public void OnDataUpdated(ModelChangeEventBox eventBox)
         {
-            if (eventBox.TryGetEvent<OmokGameEvents.PlacePlayerStone>(out var playerPlaceEvent))
+            if (eventBox.TryGetEvent<OmokGameEvents.PlaceStone>(out var placeEvent))
             {
-                _view.PlaceStone(playerPlaceEvent.Position, playerPlaceEvent.StoneColor, !playerPlaceEvent.IsBoardFull);
+                _view.PlaceStone(placeEvent.Position, placeEvent.StoneColor);
                 ApplyState();
-            }
-            if (eventBox.TryGetEvent<OmokGameEvents.PlaceOpponentStone>(out var aiPlaceEvent))
-            {
-                _view.PlaceStone(aiPlaceEvent.Position, aiPlaceEvent.StoneColor);
-                ApplyState();
+                CheckAndApplyOpponentTurn();
             }
         }
 
         public override void InitializeView()
         {
             ApplyState();
+            CheckAndApplyOpponentTurn();
         }
         #endregion
 
         #region To View
         private void ApplyState()
         {
-            _view.ApplyState(_omokGame.CurrentOmokActor, _omokGame.IsPlayerTurn(), _omokGame.TurnCount);
+            _view.ApplyState(_omokGame.CurrentActor, _omokGame.GetOmokStoneColor(_omokGame.CurrentActor), _omokGame.TurnCount);
+        }
+
+        private void CheckAndApplyOpponentTurn()
+        {
+            if (!_omokGame.IsGameEnd
+                && _omokGame.CurrentActor == ActorType.Opponent
+                && !_omokGame.IsBoardFull())
+            {
+                _view.WaitForOpponent();
+            }
         }
         #endregion
 

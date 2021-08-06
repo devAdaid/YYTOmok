@@ -4,7 +4,8 @@ namespace Presentations
 {
     public interface IOmokGameView : IView
     {
-        void PlaceStone(OmokGridPosition position, OmokStoneColor stoneColor, bool waitAI = false);
-        void ApplyState(OmokActorType currentActor, bool isPlayer, int turnCount);
+        void PlaceStone(OmokGridPosition position, OmokStoneColor stoneColor);
+        void ApplyState(ActorType currentActor, OmokStoneColor currentActorColor, int turnCount);
+        void WaitForOpponent();
     }
 }
