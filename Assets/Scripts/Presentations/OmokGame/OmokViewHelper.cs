@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace Presentaions
+namespace Presentations
 {
     [System.Serializable]
     public class OmokViewHelper : MonoBehaviour

@@ -1,6 +1,6 @@
 using AY.Core;
 
-namespace Presentaions
+namespace Presentations
 {
     public interface IOmokGameView : IView
     {

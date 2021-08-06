@@ -9,7 +9,7 @@ namespace Models
     public class OmokGame : Model
     {
         public OmokActorType PlayerActor { get; private set; } = OmokActorType.Black;
-        public OmokActorType AIActor => PlayerActor.GetOpponentActor();
+        public OmokActorType OpponentActor => PlayerActor.GetOpponentActor();
         public OmokActorType CurrentOmokActor { get; private set; } = OmokActorType.Black;
         public OmokStoneColor[,] BoardState { get; private set; } = new OmokStoneColor[Define.OMOK_COUNT, Define.OMOK_COUNT];
         public int TurnCount { get; private set; } = 1;
@@ -29,26 +29,26 @@ namespace Models
             var stoneColor = GetOmokStoneColor(PlayerActor);
             DoPlaceStone(position, stoneColor);
 
-            SendEventDirectly<PlacePlayerOmokStone>(new PlacePlayerOmokStone(position, stoneColor, IsBoardFull()));
+            SendEventDirectly<OmokGameEvents.PlacePlayerStone>(new OmokGameEvents.PlacePlayerStone(position, stoneColor, IsBoardFull()));
         }
 
-        public void PlaceAIStone()
+        public void PlaceOpponentStone()
         {
             if (IsPlayerTurn())
             {
                 return;
             }
 
-            var position = GetAIPlacePosition();
+            var position = GetOpponentPlacePosition();
             if (!CanPlaceStone(position))
             {
                 return;
             }
 
-            var stoneColor = GetOmokStoneColor(AIActor);
+            var stoneColor = GetOmokStoneColor(OpponentActor);
             DoPlaceStone(position, stoneColor);
 
-            SendEventDirectly<PlaceAIOmokStone>(new PlaceAIOmokStone(position, stoneColor));
+            SendEventDirectly<OmokGameEvents.PlaceOpponentStone>(new OmokGameEvents.PlaceOpponentStone(position, stoneColor));
         }
 
         private void DoPlaceStone(OmokGridPosition position, OmokStoneColor stoneColor)
@@ -99,20 +99,10 @@ namespace Models
 
         private bool IsBoardFull()
         {
-            for (int row = 0; row < Define.OMOK_COUNT; ++row)
-            {
-                for (int col = 0; col < Define.OMOK_COUNT; ++col)
-                {
-                    if (BoardState[row, col] == OmokStoneColor.Empty)
-                    {
-                        return false;
-                    }
-                }
-            }
-            return true;
+            return TurnCount < (Define.OMOK_COUNT * Define.OMOK_COUNT);
         }
 
-        private OmokGridPosition GetAIPlacePosition()
+        private OmokGridPosition GetOpponentPlacePosition()
         {
             // TODO: AI 구현
             var candidates = new List<OmokGridPosition>();

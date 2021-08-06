@@ -2,7 +2,7 @@ using AY.Core;
 using ModelChangeEvents;
 using Models;
 
-namespace Presentaions
+namespace Presentations
 {
     public class OmokGamePresenter : Presenter<IOmokGameView>, IListenModel
     {
@@ -28,12 +28,12 @@ namespace Presentaions
 
         public void OnDataUpdated(ModelChangeEventBox eventBox)
         {
-            if (eventBox.TryGetEvent<PlacePlayerOmokStone>(out var playerPlaceEvent))
+            if (eventBox.TryGetEvent<OmokGameEvents.PlacePlayerStone>(out var playerPlaceEvent))
             {
                 _view.PlaceStone(playerPlaceEvent.Position, playerPlaceEvent.StoneColor, !playerPlaceEvent.IsBoardFull);
                 ApplyState();
             }
-            if (eventBox.TryGetEvent<PlaceAIOmokStone>(out var aiPlaceEvent))
+            if (eventBox.TryGetEvent<OmokGameEvents.PlaceOpponentStone>(out var aiPlaceEvent))
             {
                 _view.PlaceStone(aiPlaceEvent.Position, aiPlaceEvent.StoneColor);
                 ApplyState();
@@ -42,7 +42,7 @@ namespace Presentaions
 
         public override void InitializeView()
         {
-            //_view.ApplyBoardState(_omokGame.BoardState);
+            ApplyState();
         }
         #endregion
 
@@ -59,9 +59,9 @@ namespace Presentaions
             _omokGame.PlacePlayerStone(position);
         }
 
-        public void RequestAIPlaceStone()
+        public void RequestOpponentPlaceStone()
         {
-            _omokGame.PlaceAIStone();
+            _omokGame.PlaceOpponentStone();
         }
         #endregion
     }

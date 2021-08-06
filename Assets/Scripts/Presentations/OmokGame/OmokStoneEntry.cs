@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Presentaions
+namespace Presentations
 {
     public class OmokStoneEntry : MonoBehaviour
     {

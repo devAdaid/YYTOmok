@@ -3,9 +3,8 @@ using AY.Core;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.UI;
 
-namespace Presentaions
+namespace Presentations
 {
     public class OmokGameView : View, IOmokGameView
     {
@@ -37,15 +36,15 @@ namespace Presentaions
         #endregion
 
         #region From Presenter
-        public void PlaceStone(OmokGridPosition gridPosition, OmokStoneColor stoneColor, bool waitAI = false)
+        public void PlaceStone(OmokGridPosition gridPosition, OmokStoneColor stoneColor, bool waitOpponent = false)
         {
             var position = _viewHelper.GetWorldPosition(gridPosition);
             var stoneEntry = Instantiate(_stonePrefab, position, Quaternion.identity, transform);
             stoneEntry.ApplyStoneState(_viewHelper.StoneSize, stoneColor);
 
-            if (waitAI)
+            if (waitOpponent)
             {
-                StartCoroutine(WaitAITurn());
+                StartCoroutine(WaitOpponentTurn());
             }
         }
 
@@ -62,16 +61,16 @@ namespace Presentaions
             _presenter.PlacePlayerStone(gridPosition);
         }
 
-        public void OnAIWaitEnd()
+        public void OnOpponentWaitEnd()
         {
-            _presenter.RequestAIPlaceStone();
+            _presenter.RequestOpponentPlaceStone();
         }
         #endregion
 
-        private IEnumerator WaitAITurn()
+        private IEnumerator WaitOpponentTurn()
         {
             yield return new WaitForSeconds(2f);
-            OnAIWaitEnd();
+            OnOpponentWaitEnd();
         }
     }
 }
