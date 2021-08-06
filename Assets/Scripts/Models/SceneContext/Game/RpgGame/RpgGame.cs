@@ -59,6 +59,13 @@ namespace Models
         public void SelectCard(SkilCardType cardType)
         {
             DrawnCards.Clear();
+            if (cardType == SkilCardType.Strike)
+            {
+                var targetActor = GetActor(_commonGame.NotCurrentActor);
+                targetActor.DecreaseHp(10);
+                SendEventDirectly<RpgGameEvents.Attack>(new RpgGameEvents.Attack(_commonGame.CurrentActor, _commonGame.NotCurrentActor, 10));
+            }
+
             if (_commonGame.CurrentActor == ActorType.Player)
             {
                 SendEventDirectly<RpgGameEvents.CardSelected>(new RpgGameEvents.CardSelected(cardType));
@@ -86,13 +93,10 @@ namespace Models
                 switch (attackType)
                 {
                     case AttackType.NormalAttack:
-                        UnityEngine.Debug.Log("일반공격");
                         return NOMAL_ATTACK_DAMAGE;
                     case AttackType.ComboAttack:
-                        UnityEngine.Debug.Log("콤보공격");
                         return NOMAL_ATTACK_DAMAGE + NOMAL_ATTACK_DAMAGE;
                     case AttackType.InstantDead:
-                        UnityEngine.Debug.Log("즉사");
                         return INSTANCE_DEAD_DAMAGE;
                 }
             }
@@ -109,13 +113,11 @@ namespace Models
                 {
                     case AttackType.DrawNormalCard:
                         {
-                            UnityEngine.Debug.Log("일반카드");
                             cards = new List<SkilCardType>() { SkilCardType.Strike, SkilCardType.NextAttackTwice, SkilCardType.DecreaseDefense };
                             break;
                         }
                     case AttackType.DrawRareCard:
                         {
-                            UnityEngine.Debug.Log("고급카드");
                             cards = new List<SkilCardType>() { SkilCardType.Strike, SkilCardType.NextAttackTwice, SkilCardType.DecreaseDefense };
                             break;
                         }
