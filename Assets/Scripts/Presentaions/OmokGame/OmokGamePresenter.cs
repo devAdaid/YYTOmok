@@ -31,10 +31,12 @@ namespace Presentaions
             if (eventBox.TryGetEvent<PlacePlayerOmokStone>(out var playerPlaceEvent))
             {
                 _view.PlaceStone(playerPlaceEvent.Position, playerPlaceEvent.StoneColor, !playerPlaceEvent.IsBoardFull);
+                ApplyState();
             }
             if (eventBox.TryGetEvent<PlaceAIOmokStone>(out var aiPlaceEvent))
             {
                 _view.PlaceStone(aiPlaceEvent.Position, aiPlaceEvent.StoneColor);
+                ApplyState();
             }
         }
 
@@ -45,7 +47,10 @@ namespace Presentaions
         #endregion
 
         #region To View
-
+        private void ApplyState()
+        {
+            _view.ApplyState(_omokGame.CurrentOmokActor, _omokGame.IsPlayerTurn(), _omokGame.TurnCount);
+        }
         #endregion
 
         #region From View

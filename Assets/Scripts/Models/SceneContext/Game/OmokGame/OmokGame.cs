@@ -12,6 +12,7 @@ namespace Models
         public OmokActorType AIActor => PlayerActor.GetOpponentActor();
         public OmokActorType CurrentOmokActor { get; private set; } = OmokActorType.Black;
         public OmokStoneColor[,] BoardState { get; private set; } = new OmokStoneColor[Define.OMOK_COUNT, Define.OMOK_COUNT];
+        public int TurnCount { get; private set; } = 1;
 
         public void PlacePlayerStone(OmokGridPosition position)
         {
@@ -54,9 +55,10 @@ namespace Models
         {
             BoardState[position.Row, position.Col] = stoneColor;
             CurrentOmokActor = CurrentOmokActor.GetOpponentActor();
+            TurnCount += 1;
         }
 
-        private bool IsPlayerTurn()
+        public bool IsPlayerTurn()
         {
             return CurrentOmokActor == PlayerActor;
         }

@@ -1,7 +1,9 @@
 using System.Collections;
 using AY.Core;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace Presentaions
 {
@@ -11,6 +13,8 @@ namespace Presentaions
         private OmokViewHelper _viewHelper;
         [SerializeField]
         private OmokStoneEntry _stonePrefab;
+        [SerializeField]
+        private TMP_Text _stateText;
 
         #region View
         protected OmokGamePresenter _presenter;
@@ -43,6 +47,11 @@ namespace Presentaions
             {
                 StartCoroutine(WaitAITurn());
             }
+        }
+
+        public void ApplyState(OmokActorType currentActor, bool isPlayer, int turnCount)
+        {
+            _stateText.text = $"({currentActor.GetText()}) {(isPlayer ? "나" : "상대")}의 턴, {turnCount}턴 째";
         }
         #endregion
 

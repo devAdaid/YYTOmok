@@ -819,7 +819,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "(\uAC80\uC815) \uB098\uC758 \uD134, 12\uD134 \uC9F8"
+  m_text: "(\uD751) \uB098\uC758 \uD134, 12\uD134 \uC9F8"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 487093c9d20be45259af8ca14cc904d5, type: 2}
   m_sharedMaterial: {fileID: 2722006732428687390, guid: 487093c9d20be45259af8ca14cc904d5, type: 2}
@@ -1177,6 +1177,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _viewHelper: {fileID: 1571800558}
   _stonePrefab: {fileID: 6961148977493079067, guid: c3bc13ab3db95410ca130f6caf3b67be, type: 3}
+  _stateText: {fileID: 1233371877}
 --- !u!114 &1571800557
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1382,7 +1383,7 @@ RectTransform:
   m_GameObject: {fileID: 1778480681}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: -1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2059129520}
   m_RootOrder: 1
@@ -1390,7 +1391,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 330, y: 0}
-  m_SizeDelta: {x: 200, y: 200}
+  m_SizeDelta: {x: 200, y: 300}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1778480683
 MonoBehaviour:
@@ -1405,14 +1406,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.13207549, g: 0.13207549, b: 0.13207549, a: 1}
+  m_Color: {r: 0.2924528, g: 0.2924528, b: 0.2924528, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 43eb951a775644723a51fe9a4529ed08, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 1179c352c0f1240ad96733bf7e0db2d1, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1465,7 +1466,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -303, y: 0}
-  m_SizeDelta: {x: 200, y: 200}
+  m_SizeDelta: {x: 200, y: 300}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2010462501
 MonoBehaviour:
@@ -1487,7 +1488,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 43eb951a775644723a51fe9a4529ed08, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 1179c352c0f1240ad96733bf7e0db2d1, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
