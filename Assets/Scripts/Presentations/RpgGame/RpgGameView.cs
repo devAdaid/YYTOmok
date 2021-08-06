@@ -34,7 +34,8 @@ namespace Presentations
         #region From Presenter
         public void Attack(ActorType performer, ActorType target, int damage)
         {
-            // TODO
+            var targetActor = GetActorEntry(target);
+            targetActor.ShowDamageFloater(damage);
         }
 
         public void ApplyHp(ActorType actorType, int hp, int maxHp)
