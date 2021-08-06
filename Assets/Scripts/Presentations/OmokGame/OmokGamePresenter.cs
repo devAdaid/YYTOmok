@@ -7,6 +7,7 @@ namespace Presentations
 {
     public class OmokGamePresenter : Presenter<IOmokGameView>, IListenModel
     {
+        private CommonGame _commonGame;
         private OmokGame _omokGame;
 
         #region Presenter
@@ -14,16 +15,19 @@ namespace Presentations
 
         protected override void SetModels()
         {
+            _commonGame = GameSceneContextHolder.Instance.CommonGame;
             _omokGame = GameSceneContextHolder.Instance.OmokGame;
         }
 
         public override void AddModelListeners()
         {
+            _commonGame.AddListener(this);
             _omokGame.AddListener(this);
         }
 
         public override void RemoveModelListeners()
         {
+            _commonGame.RemoveListener(this);
             _omokGame.RemoveListener(this);
         }
 
@@ -33,6 +37,10 @@ namespace Presentations
             {
                 _view.PlaceStone(placeEvent.Position, placeEvent.StoneColor);
                 ApplyState();
+            }
+
+            if (eventBox.TryGetEvent<CommonGameEvents.ActorChanged>(out var actorChangeEvent))
+            {
                 CheckAndApplyOpponentTurn();
             }
         }
@@ -47,13 +55,13 @@ namespace Presentations
         #region To View
         private void ApplyState()
         {
-            _view.ApplyState(_omokGame.CurrentActor, _omokGame.GetOmokStoneColor(_omokGame.CurrentActor), _omokGame.TurnCount);
+            _view.ApplyState(_commonGame.CurrentActor, _omokGame.GetOmokStoneColor(_commonGame.CurrentActor), _commonGame.TurnCount);
         }
 
         private void CheckAndApplyOpponentTurn()
         {
             if (!_omokGame.IsGameEnd
-                && _omokGame.CurrentActor == ActorType.Opponent
+                && _commonGame.CurrentActor == ActorType.Opponent
                 && !_omokGame.IsBoardFull())
             {
                 _view.WaitForOpponent();

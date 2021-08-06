@@ -1,9 +1,13 @@
+using System.Collections.Generic;
+using System.Linq;
+
 namespace Models
 {
     public class RpgActor
     {
         public int Hp { get; private set; }
         public readonly int MaxHp;
+        public List<RpgActorStatusEffect> StatusEffects = new List<RpgActorStatusEffect>();
 
         public RpgActor(int maxHp)
         {
@@ -35,6 +39,15 @@ namespace Models
             Hp = afterHp;
 
             return beforeHp != afterHp;
+        }
+
+        public void OnEndTurn()
+        {
+            foreach (var effect in StatusEffects)
+            {
+                effect.DecreaseTurn();
+            }
+            StatusEffects = StatusEffects.Where(effect => effect.RemainTurn > 0).ToList();
         }
     }
 }

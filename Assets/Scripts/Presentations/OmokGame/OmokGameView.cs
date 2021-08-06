@@ -50,7 +50,7 @@ namespace Presentations
 
         public void ApplyState(ActorType currentActor, OmokStoneColor currentActorColor, int turnCount)
         {
-            _stateText.text = $"({currentActorColor.GetText()}) {(currentActor.GetText())}의 턴, {turnCount}턴 째";
+            _stateText.text = $"({currentActorColor.GetText()}) {(currentActor.GetText())}의 턴, {turnCount}턴 째 {(currentActor == ActorType.Opponent ? "(...)" : "")}";
         }
 
         public void WaitForOpponent()

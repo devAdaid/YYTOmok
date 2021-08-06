@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e0e386a69577e42e2a7d5df7cbf23113, type: 3}
+  m_Name: Cards
+  m_EditorClassIdentifier: 
+  Strike: {fileID: 11400000, guid: bd686f4aa52994dd78e2cdc80c72c38a, type: 2}
+  Next: {fileID: 11400000, guid: 200eb76f247cc4c0985f03814be081ce, type: 2}
+  Defense: {fileID: 11400000, guid: 8689f212fd05e49d8b8b832307dc37d6, type: 2}

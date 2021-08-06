@@ -12,38 +12,32 @@ namespace Models
         public readonly OmokStoneColor PlayerColor;
         public bool IsGameEnd { get; private set; }
         public OmokStoneColor OpponentColor => PlayerColor.GetOpponentColor();
-        public ActorType CurrentActor { get; private set; }
-        public ActorType NotCurrentActor => CurrentActor.GetOpponentActor();
-        public int TurnCount { get; private set; }
         public int PlaceCount { get; private set; }
         private OmokGridPosition _playerLastPosition = OmokGridPosition.INVALID;
         private OmokGridPosition _opponentLastPosition = OmokGridPosition.INVALID;
 
+        private readonly CommonGame _commonGame;
         private readonly RpgGame _rpgGame;
 
         private static readonly OmokStoneColor FIRST_ACTOR_COLOR = OmokStoneColor.Black;
 
-        public OmokGame(RpgGame rpgGame)
+        public OmokGame(CommonGame commonGame, RpgGame rpgGame)
         {
-            BoardState = new OmokStoneColor[Define.OMOK_COUNT, Define.OMOK_COUNT];
-            TurnCount = 1;
-            PlaceCount = 0;
+            _commonGame = commonGame;
             _rpgGame = rpgGame;
 
-            // 선턴 결정
-            var rand = new Random();
-            var randIndex = rand.Next(2);
-            switch (randIndex)
+            BoardState = new OmokStoneColor[Define.OMOK_COUNT, Define.OMOK_COUNT];
+            PlaceCount = 0;
+
+            switch (commonGame.CurrentActor)
             {
-                case 0:
+                case ActorType.Player:
                     {
-                        CurrentActor = ActorType.Player;
                         PlayerColor = FIRST_ACTOR_COLOR;
                         break;
                     }
-                case 1:
+                case ActorType.Opponent:
                     {
-                        CurrentActor = ActorType.Opponent;
                         PlayerColor = FIRST_ACTOR_COLOR.GetOpponentColor();
                         break;
                     }
@@ -63,7 +57,7 @@ namespace Models
 
         private void DoPlaceStone(OmokGridPosition position, ActorType actorType)
         {
-            if (actorType != CurrentActor)
+            if (actorType != _commonGame.CurrentActor)
             {
                 return;
             }
@@ -80,7 +74,7 @@ namespace Models
             var lastPlacePosition = GetLastPlacePosition(actorType);
             var attackTypes = GetAttackTypes(position, stoneColor, lastPlacePosition);
 
-            _rpgGame.Attack(CurrentActor, NotCurrentActor, attackTypes);
+            _rpgGame.Attack(_commonGame.CurrentActor, _commonGame.NotCurrentActor, attackTypes);
 
             //TODO
             if (actorType == ActorType.Player)
@@ -92,31 +86,24 @@ namespace Models
                 _opponentLastPosition = position;
             }
 
-            if (IsBoardFull())
+            if (_commonGame.IsGameEnd)
             {
-                IsGameEnd = true;
+                // pass
             }
-            else if (_rpgGame.IsGameEnd)
+            else if (IsBoardFull())
             {
-                IsGameEnd = true;
+                _commonGame.OnGameEnd();
+            }
+            else if (_rpgGame.DrawnCards.Count > 0)
+            {
+                // pass
             }
             else
             {
-                CurrentActor = CurrentActor.GetOpponentActor();
-                TurnCount += 1;
+                _commonGame.OnTurnEnd();
             }
 
             SendEventDirectly<OmokGameEvents.PlaceStone>(new OmokGameEvents.PlaceStone(position, stoneColor));
-        }
-
-        public bool IsPlayerTurn()
-        {
-            return CurrentActor == ActorType.Player;
-        }
-
-        private bool CanPlaceStone(int rowIndex, int colIndex)
-        {
-            return CanPlaceStone(new OmokGridPosition(rowIndex, colIndex));
         }
 
         private bool CanPlaceStone(OmokGridPosition position)

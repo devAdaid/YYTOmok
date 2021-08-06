@@ -42,6 +42,12 @@ namespace Presentations
             var actorEntry = GetActorEntry(actorType);
             actorEntry.ApplyHp(hp, maxHp);
         }
+
+        public void ApplyColor(ActorType actorType, OmokStoneColor stoneColor)
+        {
+            var actorEntry = GetActorEntry(actorType);
+            actorEntry.ApplyColor(stoneColor);
+        }
         #endregion
 
         #region To Presenter

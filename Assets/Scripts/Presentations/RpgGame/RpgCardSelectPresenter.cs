@@ -4,12 +4,12 @@ using Models;
 
 namespace Presentations
 {
-    public class RpgGamePresenter : Presenter<IRpgGameView>, IListenModel
+    public class RpgCardSelectPresenter : Presenter<IRpgCardSelectView>, IListenModel
     {
         private RpgGame _rpgGame;
 
         #region Presenter
-        public RpgGamePresenter(IRpgGameView view) : base(view) { }
+        public RpgCardSelectPresenter(RpgCardSelectView view) : base(view) { }
 
         protected override void SetModels()
         {
@@ -28,34 +28,36 @@ namespace Presentations
 
         public void OnDataUpdated(ModelChangeEventBox eventBox)
         {
-            if (eventBox.TryGetEvent<RpgGameEvents.Attack>(out var attackEvent))
+            if (eventBox.TryGetEvent<RpgGameEvents.CardDrawn>(out var cardDrawnEvent))
             {
-                _view.Attack(attackEvent.Performer, attackEvent.Target, attackEvent.Damage);
-                ApplyHp(attackEvent.Target);
+                _view.SetEnable(true);
+                _view.ApplyCards(cardDrawnEvent.Cards);
+            }
+
+            if (eventBox.TryGetEvent<RpgGameEvents.CardSelected>(out var cardSelectd))
+            {
+                _view.SetEnable(false);
             }
         }
 
         public override void InitializeView()
         {
-            ApplyHp(ActorType.Player);
-            ApplyHp(ActorType.Opponent);
-
-            var omokGame = GameSceneContextHolder.Instance.OmokGame;
-            _view.ApplyColor(ActorType.Player, omokGame.PlayerColor);
-            _view.ApplyColor(ActorType.Opponent, omokGame.OpponentColor);
+            SetEnable(false);
         }
         #endregion
 
         #region To View
-        private void ApplyHp(ActorType actorType)
+        public void SetEnable(bool enable)
         {
-            var targetActor = _rpgGame.GetActor(actorType);
-            _view.ApplyHp(actorType, targetActor.Hp, targetActor.MaxHp);
+            _view.SetEnable(enable);
         }
         #endregion
 
         #region From View
-
+        public void SelectCard(SkilCardType cardType)
+        {
+            _rpgGame.SelectCard(cardType);
+        }
         #endregion
     }
 }
