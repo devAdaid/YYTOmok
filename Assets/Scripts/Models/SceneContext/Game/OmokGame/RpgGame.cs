@@ -1,4 +1,5 @@
 using AY.Core;
+using ModelChangeEvents;
 
 namespace Models
 {
@@ -18,7 +19,9 @@ namespace Models
         {
             var targetActor = GetActor(target);
             var damage = CalculateDamage();
+            targetActor.DecreaseHp(damage);
 
+            SendEventDirectly<RpgGameEvents.Attack>(new RpgGameEvents.Attack(performer, target, damage));
         }
 
         public RpgActor GetActor(ActorType actorType)

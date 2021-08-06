@@ -13,16 +13,20 @@ namespace Models
         public bool IsGameEnd { get; private set; }
         public OmokStoneColor OpponentColor => PlayerColor.GetOpponentColor();
         public ActorType CurrentActor { get; private set; }
+        public ActorType NotCurrentActor => CurrentActor.GetOpponentActor();
         public int TurnCount { get; private set; }
         public int PlaceCount { get; private set; }
 
+        private readonly RpgGame _rpgGame;
+
         private static readonly OmokStoneColor FIRST_ACTOR_COLOR = OmokStoneColor.Black;
 
-        public OmokGame()
+        public OmokGame(RpgGame rpgGame)
         {
             BoardState = new OmokStoneColor[Define.OMOK_COUNT, Define.OMOK_COUNT];
             TurnCount = 1;
             PlaceCount = 0;
+            _rpgGame = rpgGame;
 
             // 선턴 결정
             var rand = new Random();
@@ -79,6 +83,7 @@ namespace Models
         {
             BoardState[position.Row, position.Col] = stoneColor;
             PlaceCount += 1;
+            _rpgGame.Attack(CurrentActor, NotCurrentActor);
 
             if (IsBoardFull())
             {
